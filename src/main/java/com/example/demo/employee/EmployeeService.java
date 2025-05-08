@@ -1,11 +1,10 @@
 package com.example.demo.employee;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 @Service
 public class EmployeeService {
@@ -41,25 +40,34 @@ public class EmployeeService {
         return employeeRepository.findById(id);
     }
 
-    public List<Employee> getEmployeeByName(String name) {
-        return employeeRepository.findByName(name);
+    public List<Employee> getEmployeeByFirst_name(String first_name) {
+        return employeeRepository.findByFirst_name(first_name);
     }
 
     public Employee updateEmployee(Long id, Employee employee) {
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + id + " does not exist"));
-
-        if (employee.getName() != null && !employee.getName().isEmpty()) {
-            existingEmployee.setName(employee.getName());
+        if (employee.getFirst_name() != null && !employee.getFirst_name().isEmpty()) {
+            existingEmployee.setFirst_name(employee.getFirst_name());
+        }
+        if (employee.getLast_name() != null && !employee.getLast_name().isEmpty()) {
+            existingEmployee.setLast_name(employee.getLast_name());
+        }
+        if (employee.getNic() != null && !employee.getNic().isEmpty()) {
+            existingEmployee.setNic(employee.getNic());
+        }
+        if (employee.getAge() > 0) {
+            existingEmployee.setAge(employee.getAge());
         }
         if (employee.getEmail() != null && !employee.getEmail().isEmpty()) {
+            Optional<Employee> employeeByEmail = employeeRepository.findByEmail(employee.getEmail());
+            if (employeeByEmail.isPresent() && employeeByEmail.get().getId() != id) {
+                throw new IllegalStateException("Email already exists");
+            }
             existingEmployee.setEmail(employee.getEmail());
         }
-        if (employee.getSalary() > 0) {
-            existingEmployee.setSalary(employee.getSalary());
-        }
-        if (employee.getBirthday() != null) {
-            existingEmployee.setBirthday(employee.getBirthday());
+        if (employee.getPhone() != null && !employee.getPhone().isEmpty()) {
+            existingEmployee.setPhone(employee.getPhone());
         }
         return employeeRepository.save(existingEmployee);
     }
