@@ -1,11 +1,16 @@
 package com.example.demo.employee;
 
 import java.time.LocalDate;
+import java.time.Period;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PostLoad;
+import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,12 +24,23 @@ public class Employee {
     private String first_name;
     private String last_name;
     private String nic;
-    private int age;
     private String gender;
     private String phone;
     private String email;
     private LocalDate birthday;
     private String department_id;
+
+    @Column
+    private int age;
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    private void calculateAge() {
+        if (birthday != null) {
+            this.age = Period.between(birthday, LocalDate.now()).getYears();
+        }
+    }
 
     public long getId() {
         return id;
