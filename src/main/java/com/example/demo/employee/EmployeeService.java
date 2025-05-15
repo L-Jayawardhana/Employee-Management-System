@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +22,8 @@ public class EmployeeService {
         if (employeeByEmail.isPresent()) {
             throw new IllegalStateException("Email already exists");
         }
+        String hashed = BCrypt.hashpw(employee.getPassword(), BCrypt.gensalt());
+        employee.setPassword(hashed);
         return employeeRepository.save(employee);
     }
 
@@ -65,6 +68,10 @@ public class EmployeeService {
                 throw new IllegalStateException("Email already exists");
             }
             existingEmployee.setEmail(employee.getEmail());
+        }
+        if (employee.getPassword() != null && !employee.getPassword().isEmpty()) {
+            String hashed = BCrypt.hashpw(employee.getPassword(), BCrypt.gensalt());
+            existingEmployee.setPassword(hashed);
         }
         if (employee.getPhone() != null && !employee.getPhone().isEmpty()) {
             existingEmployee.setPhone(employee.getPhone());
