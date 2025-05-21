@@ -3,35 +3,49 @@ package com.example.demo.model;
 import java.time.LocalDate;
 import java.time.Period;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PostLoad;
-import jakarta.persistence.PostPersist;
-import jakarta.persistence.PostUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
-@Table
+@Table (name = "employee",
+        uniqueConstraints = {
+            @UniqueConstraint(name = "unique_employee_nic", columnNames = "nic"),
+            @UniqueConstraint(name = "unique_employee_email", columnNames = "email")
+        }
+)
 public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "first_name", nullable = false)
     private String first_name;
+
+    @Column(name = "last_name", nullable = false)
     private String last_name;
+
+    @Column(name = "nic", nullable = false)
     private String nic;
+
+    @Column(name = "gender", nullable = false)
     private String gender;
+
+    @Column(name = "phone", nullable = false)
     private String phone;
+
+    @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "password", nullable = false)
     private String password;
+
+    @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
+
+    @Column(name = "department_id", nullable = false)
     private String department_id;
 
-    @Column
+    @Column(name = "age")
     private int age;
 
     @PostLoad
