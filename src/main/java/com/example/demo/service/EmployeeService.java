@@ -1,8 +1,10 @@
-package com.example.demo.employee;
+package com.example.demo.service;
 
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.model.Employee;
+import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
