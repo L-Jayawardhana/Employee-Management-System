@@ -3,6 +3,7 @@ package com.example.demo.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.demo.model.Department;
 import com.example.demo.model.Employee;
 import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +21,25 @@ public class EmployeeService {
     }
 
     public Employee addEmployee(Employee employee) {
-        Optional<Employee> employeeByEmail = employeeRepository.findByEmail(employee.getEmail());
-        if (employeeByEmail.isPresent()) {
-            throw new IllegalStateException("Email already exists");
-        }
-        String hashed = BCrypt.hashpw(employee.getPassword(), BCrypt.gensalt());
-        employee.setPassword(hashed);
+        Department department = employee.getDepartment();
+
+        // Get the highest number used so far
+        Integer maxIdNum = employeeRepository.findMaxIdNumberByDepartment(department);
+        int nextIdNum = (maxIdNum == null) ? 1 : maxIdNum + 1;
+
+        // Format ID
+        String newId = department.getId() + String.format("%03d", nextIdNum);
+        employee.setId(newId);
+
         return employeeRepository.save(employee);
     }
+
 
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
 
-    public void deleteEmployee(Long id) {
+    public void deleteEmployee(String id) {
         boolean exists = employeeRepository.existsById(id);
         if (!exists) {
             throw new IllegalStateException("Employee with id " + id + " does not exist");
@@ -41,7 +47,7 @@ public class EmployeeService {
         employeeRepository.deleteById(id);
     }
 
-    public Optional<Employee> getEmployeeById(Long id) {
+    public Optional<Employee> getEmployeeById(String id) {
         return employeeRepository.findById(id);
     }
 
@@ -49,7 +55,7 @@ public class EmployeeService {
         return employeeRepository.findByFirst_name(first_name);
     }
 
-    public Employee updateEmployee(Long id, Employee employee) {
+    public Employee updateEmployee(String id, Employee employee) {
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Employee with id " + id + " does not exist"));
         if (employee.getFirst_name() != null && !employee.getFirst_name().isEmpty()) {
