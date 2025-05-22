@@ -42,8 +42,9 @@ public class Employee {
     @Column(name = "birthday", nullable = false)
     private LocalDate birthday;
 
-    @Column(name = "department_id", nullable = false)
-    private String department_id;
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
 
     @Column(name = "age")
     private int age;
@@ -137,11 +138,11 @@ public class Employee {
         this.birthday = birthday;
     }
 
-    public String getDepartment_id() {
-        return department_id;
+    public Department getDepartment() {
+        return department;
     }
 
-    public void setDepartment_id(String department_id) {
-        this.department_id = department_id;
+    public void setDepartment(Department department) {
+        this.department = department;
     }
 }
