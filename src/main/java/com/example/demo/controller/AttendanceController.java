@@ -29,7 +29,7 @@ public class AttendanceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createatAttendance(@RequestBody AttendanceCreateDTO attendanceCreateDTO) {
+    public ResponseEntity<?> createAttendance(@RequestBody AttendanceCreateDTO attendanceCreateDTO) {
         try {
             Attendance saved = attendanceService.createAttendance(attendanceCreateDTO);
             AttendanceDTO dto = new AttendanceDTO(
@@ -61,7 +61,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/employee_Id/{id}")
-    public ResponseEntity<?> getAttendanceById(@PathVariable String id) {
+    public ResponseEntity<?> getAttendanceByEmployeeId(@PathVariable String id) {
         try {
             var attendances = attendanceService.getAttendanceByEmployeeId(id);
             var dtos = attendances.stream().map(a -> new AttendanceDTO(
