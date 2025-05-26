@@ -1,12 +1,16 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Department;
-import com.example.demo.repository.DepartmentRepository;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.example.demo.dto.DepartmentCreateDTO;
+import com.example.demo.dto.DepartmentDTO;
+import com.example.demo.model.Department;
+import com.example.demo.repository.DepartmentRepository;
 
 @Service
 public class DepartmentService {
@@ -18,20 +22,24 @@ public class DepartmentService {
         this.departmentRepository = departmentRepository;
     }
 
-    public Department addDepartment(Department department) {
-        return departmentRepository.save(department);
+    public DepartmentDTO addDepartment(DepartmentCreateDTO dto) {
+        Department department = new Department();
+        department.setName(dto.getName());
+        department.setSalary(dto.getSalary());
+        Department saved = departmentRepository.save(department);
+        return toDTO(saved);
     }
 
-    public List<Department> getAllDepartments() {
-        return departmentRepository.findAll();
+    public List<DepartmentDTO> getAllDepartments() {
+        return departmentRepository.findAll().stream().map(this::toDTO).collect(Collectors.toList());
     }
 
-    public Optional<Department> getDepartmentById(String id) {
+    public Optional<DepartmentDTO> getDepartmentById(String id) {
         boolean exists = departmentRepository.existsById(id);
         if (!exists) {
             throw new IllegalStateException("Department with id " + id + " does not exist");
         }
-        return departmentRepository.findById(id);
+        return departmentRepository.findById(id).map(this::toDTO);
     }
 
     public void deleteDepartment(String id) {
@@ -42,15 +50,24 @@ public class DepartmentService {
         departmentRepository.deleteById(id);
     }
 
-    public Department updateDepartment(String id, Department department) {
+    public DepartmentDTO updateDepartment(String id, DepartmentCreateDTO dto) {
         Department existingDepartment = departmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Department with id " + id + " does not exist"));
-        if (department.getName() != null && !department.getName().isEmpty()) {
-            existingDepartment.setName(department.getName());
+        if (dto.getName() != null && !dto.getName().isEmpty()) {
+            existingDepartment.setName(dto.getName());
         }
-        if (department.getSalary() > 0) {
-            existingDepartment.setSalary(department.getSalary());
+        if (dto.getSalary() > 0) {
+            existingDepartment.setSalary(dto.getSalary());
         }
-        return departmentRepository.save(existingDepartment);
+        Department saved = departmentRepository.save(existingDepartment);
+        return toDTO(saved);
+    }
+
+    private DepartmentDTO toDTO(Department department) {
+        return new DepartmentDTO(
+            department.getId(),
+            department.getName(),
+            department.getSalary()
+        );
     }
 }
