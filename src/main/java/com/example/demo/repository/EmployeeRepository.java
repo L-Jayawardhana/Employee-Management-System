@@ -19,5 +19,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
 
     @Query("SELECT MAX(CAST(SUBSTRING(e.id, LENGTH(e.department.id) + 1) AS int)) FROM Employee e WHERE e.department = :department")
     Integer findMaxIdNumberByDepartment(@Param("department") Department department);
+
+    List<Employee> findByDepartment_Id(String id);
 }
 
