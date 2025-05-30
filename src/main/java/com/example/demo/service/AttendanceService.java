@@ -35,7 +35,7 @@ public class AttendanceService {
         Attendance attendance = new Attendance();
         attendance.setEmployee(employee);
         attendance.setDate(dto.getDate());
-        attendance.setStatus(Enum.valueOf(com.example.demo.Enum.AttendanceStatus.class, dto.getStatus()));
+        attendance.setStatus(Enum.valueOf(com.example.demo.model.Attendance.AttendanceStatus.class, dto.getStatus()));
         return attendanceRepository.save(attendance);
     }
 
