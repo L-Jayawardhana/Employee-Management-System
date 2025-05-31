@@ -1,9 +1,17 @@
 package com.example.demo.model;
 
-import com.example.demo.Enum.AttendanceStatus;
-import jakarta.persistence.*;
-
 import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "attendance")
@@ -23,6 +31,13 @@ public class Attendance {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private AttendanceStatus status;
+
+    public enum AttendanceStatus{
+        PRESENT,
+        HALF_DAY,
+        LEAVE,
+        NO_PAY;
+    }
 
     public Long getId() {
         return id;
