@@ -38,7 +38,7 @@ public class DepartmentController {
     @GetMapping
     public ResponseEntity<?> getAllDepartments() {
         try {
-            return ResponseEntity.ok(departmentService.getAllDepartments());
+            return ResponseEntity.status(HttpStatus.OK).body(departmentService.getAllDepartments());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
