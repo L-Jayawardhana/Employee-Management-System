@@ -10,7 +10,9 @@ import com.example.demo.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
@@ -45,4 +47,23 @@ public class EmployeeService {
         return employeeMapper.toResponseDTO(savedEmployee);
     }
 
+    public List<EmployeeResponseDTO> getAllEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream()
+                .map(employeeMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public EmployeeResponseDTO getEmployeeById(String id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found with id: " + id));
+        return employeeMapper.toResponseDTO(employee);
+    }
+
+    public List<EmployeeResponseDTO> getEmployeesByDepartmentId(String departmentId) {
+        List<Employee> employees = employeeRepository.findByDepartment_Id(departmentId);
+        return employees.stream()
+                .map(employeeMapper::toResponseDTO)
+                .collect(Collectors.toList());
+    }
 }
