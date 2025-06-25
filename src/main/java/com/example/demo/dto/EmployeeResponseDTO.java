@@ -1,16 +1,23 @@
 package com.example.demo.dto;
 
-public class EmployeeCreateDTO {
+public class EmployeeResponseDTO {
+    private String id;
     private String firstName;
     private String lastName;
     private String nic;
-    private String gender;
     private String phone;
     private String email;
-    private String password;
-    private String birthday;
+    private int age;
     private String departmentId;
 
+   // Getters and setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -36,14 +43,6 @@ public class EmployeeCreateDTO {
         this.nic = nic;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
     public String getPhone() {
         return phone;
     }
@@ -60,20 +59,12 @@ public class EmployeeCreateDTO {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    public int getAge() {
+        return age;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String getDepartmentId() {
@@ -83,4 +74,5 @@ public class EmployeeCreateDTO {
     public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
     }
+
 }
