@@ -1,5 +1,7 @@
-package com.example.demo.dto;
+package com.example.demo.mapper;
 
+import com.example.demo.dto.EmployeeCreateDTO;
+import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.model.Department;
 import com.example.demo.model.Employee;
 import org.springframework.stereotype.Component;
@@ -9,7 +11,7 @@ import java.time.LocalDate;
 @Component
 public class EmployeeMapper {
 
-    public Employee toEntity(EmployeeCreateDTO dto, Department department) {
+    public Employee toEntity(EmployeeCreateDTO dto, Department department, String hashedPassword) {
         Employee employee = new Employee();
 
         employee.setFirst_name(dto.getFirstName());
@@ -18,7 +20,7 @@ public class EmployeeMapper {
         employee.setGender(dto.getGender());
         employee.setPhone(dto.getPhone());
         employee.setEmail(dto.getEmail());
-        employee.setPassword(org.mindrot.jbcrypt.BCrypt.hashpw(dto.getPassword(), org.mindrot.jbcrypt.BCrypt.gensalt()));
+        employee.setPassword(hashedPassword);
         if (dto.getBirthday() != null && !dto.getBirthday().isEmpty()) {
             employee.setBirthday(LocalDate.parse(dto.getBirthday()));
         }

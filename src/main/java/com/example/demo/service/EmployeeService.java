@@ -1,12 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.EmployeeCreateDTO;
-import com.example.demo.dto.EmployeeMapper;
+import com.example.demo.mapper.EmployeeMapper;
 import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.model.Department;
 import com.example.demo.model.Employee;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.EmployeeRepository;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +36,11 @@ public class EmployeeService {
         int nextNum = Optional.ofNullable(employeeRepository.findMaxIdNumberByDepartment(department)).orElse(0) + 1;
         String empId = department.getId() + nextNum;
 
+        //hash password
+        String HashedPassword = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
+
         //Use Mapper to convert DTO → Entity
-        Employee employee = employeeMapper.toEntity(dto, department);
+        Employee employee = employeeMapper.toEntity(dto, department, HashedPassword);
         employee.setId(empId);
 
         //Save to DB
