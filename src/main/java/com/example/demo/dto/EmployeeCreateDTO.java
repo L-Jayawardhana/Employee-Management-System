@@ -1,14 +1,17 @@
 package com.example.demo.dto;
 
+import java.time.LocalDate;
+
 public class EmployeeCreateDTO {
     private String firstName;
     private String lastName;
     private String nic;
+    private String address;
     private String gender;
     private String phone;
     private String email;
     private String password;
-    private String birthday;
+    private LocalDate birthday;
     private String departmentId;
 
 
@@ -68,11 +71,11 @@ public class EmployeeCreateDTO {
         this.password = password;
     }
 
-    public String getBirthday() {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
@@ -82,5 +85,13 @@ public class EmployeeCreateDTO {
 
     public void setDepartmentId(String departmentId) {
         this.departmentId = departmentId;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
