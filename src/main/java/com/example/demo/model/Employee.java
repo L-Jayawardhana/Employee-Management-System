@@ -35,6 +35,9 @@ public class Employee {
     @Column(name = "nic", nullable = false)
     private String nic;
 
+    @Column(name = "address", nullable = false)
+    private String address;
+
     @Column(name = "gender", nullable = false)
     private String gender;
 
@@ -151,5 +154,13 @@ public class Employee {
 
     public void setDepartment(Department department) {
         this.department = department;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
