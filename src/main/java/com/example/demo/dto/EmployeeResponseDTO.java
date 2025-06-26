@@ -1,10 +1,12 @@
 package com.example.demo.dto;
 
+import java.time.LocalDate;
+
 public class EmployeeResponseDTO {
     private String id;
     private String firstName;
     private String lastName;
-    private String nic;
+    private String address;
     private String phone;
     private String email;
     private int age;
@@ -33,14 +35,6 @@ public class EmployeeResponseDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getNic() {
-        return nic;
-    }
-
-    public void setNic(String nic) {
-        this.nic = nic;
     }
 
     public String getPhone() {
@@ -75,4 +69,11 @@ public class EmployeeResponseDTO {
         this.departmentId = departmentId;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String adress) {
+        this.address = adress;
+    }
 }

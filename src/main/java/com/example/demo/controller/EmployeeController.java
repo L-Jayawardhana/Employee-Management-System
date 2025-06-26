@@ -1,14 +1,23 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.EmployeeCreateDTO;
-import com.example.demo.dto.EmployeeResponseDTO;
-import com.example.demo.service.EmployeeService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.example.demo.dto.EmployeeCreateDTO;
+import com.example.demo.dto.EmployeeResponseDTO;
+import com.example.demo.dto.EmployeeUpdateDTO;
+import com.example.demo.service.EmployeeService;
 
 @RestController
 @RequestMapping(path = "api/v1/employee")
@@ -22,42 +31,39 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addEmployee(@RequestBody EmployeeCreateDTO dto) {
-        try {
-            EmployeeResponseDTO response = employeeService.addEmployee(dto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error adding employee: " + e.getMessage());
-        }
+    // In this ResponseEntity<?> also correct, but using a specific DTO type is better for clarity.
+    public ResponseEntity<EmployeeResponseDTO> addEmployee(@RequestBody EmployeeCreateDTO dto) {
+        EmployeeResponseDTO response = employeeService.addEmployee(dto);
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllEmployees() {
-        try{
-            List<EmployeeResponseDTO> employees = employeeService.getAllEmployees();
-            return ResponseEntity.status(HttpStatus.OK).body(employees);
-        }catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ResponseEntity<List<EmployeeResponseDTO>> getAllEmployees() {
+        List<EmployeeResponseDTO> employees = employeeService.getAllEmployees();
+        return ResponseEntity.ok(employees);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEmployeeById(@PathVariable String id) {
-        try{
-            EmployeeResponseDTO employee = employeeService.getEmployeeById(id);
-            return ResponseEntity.status(HttpStatus.FOUND).body(employee);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found with id: " + id + e.getMessage());
-        }
+    public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable String id) {
+        EmployeeResponseDTO employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(employee);
     }
 
-    @GetMapping("/department/{id}")
-    public ResponseEntity<?> getEmployeesByDepartmentId(@PathVariable String id) {
-        try{
-            List<EmployeeResponseDTO> employees = employeeService.getEmployeesByDepartmentId(id);
-            return ResponseEntity.status(HttpStatus.FOUND).body(employees);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Department not found with id: " + id + e.getMessage());
-        }
+    @GetMapping("/department/{departmentId}")
+    public ResponseEntity<List<EmployeeResponseDTO>> getEmployeesByDepartmentId(@PathVariable String departmentId) {
+        List<EmployeeResponseDTO> employees = employeeService.getEmployeesByDepartmentId(departmentId);
+        return ResponseEntity.ok(employees);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<EmployeeResponseDTO> deleteEmployee(@PathVariable String id) {
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@PathVariable String id, @RequestBody EmployeeUpdateDTO dto) {
+        EmployeeResponseDTO updatedEmployee = employeeService.updateEmployeeById(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedEmployee);
     }
 }
