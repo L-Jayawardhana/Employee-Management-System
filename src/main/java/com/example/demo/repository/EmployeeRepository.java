@@ -21,5 +21,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
     Integer findMaxIdNumberByDepartment(@Param("department") Department department);
 
     List<Employee> findByDepartment_Id(String id);
+
+    boolean existsByEmail(String email);
+    boolean existsByNic(String nic);
 }
 

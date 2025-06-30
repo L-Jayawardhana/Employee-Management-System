@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.example.demo.exception.DepartmentNotFoundException;
+import com.example.demo.exception.EmployeeAlreadyExistsException;
 import com.example.demo.exception.EmployeeNotFoundException;
 import com.example.demo.exception.NoEmployeesFoundException;
 import org.mindrot.jbcrypt.BCrypt;
@@ -36,6 +37,13 @@ public class EmployeeService {
     }
 
     public EmployeeResponseDTO addEmployee(EmployeeCreateDTO dto) {
+        if (employeeRepository.existsByEmail(dto.getEmail())) {
+            throw new EmployeeAlreadyExistsException("Employee with email " + dto.getEmail() + " already exists");
+        }
+        if (employeeRepository.existsByNic(dto.getNic())) {
+            throw new EmployeeAlreadyExistsException("Employee with NIC " + dto.getNic() + " already exists");
+        }
+
         Department department = departmentRepository.findById(dto.getDepartmentId())
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id " + dto.getDepartmentId()));
 
