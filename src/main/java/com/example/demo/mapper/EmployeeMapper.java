@@ -28,15 +28,15 @@ public class EmployeeMapper {
     }
 
     public EmployeeResponseDTO toResponseDTO(Employee savedEmployee) {
-        EmployeeResponseDTO dto = new EmployeeResponseDTO();
-        dto.setId(savedEmployee.getId());
-        dto.setFirstName(savedEmployee.getFirst_name());
-        dto.setLastName(savedEmployee.getLast_name());
-        dto.setAddress(savedEmployee.getAddress());
-        dto.setPhone(savedEmployee.getPhone());
-        dto.setEmail(savedEmployee.getEmail());
-        dto.setAge(savedEmployee.getAge());
-        dto.setDepartmentId(savedEmployee.getDepartment().getId());
-        return dto;
+        EmployeeResponseDTO responseDto = new EmployeeResponseDTO();
+        responseDto.setId(savedEmployee.getId());
+        responseDto.setFirstName(savedEmployee.getFirst_name());
+        responseDto.setLastName(savedEmployee.getLast_name());
+        responseDto.setAddress(savedEmployee.getAddress());
+        responseDto.setPhone(savedEmployee.getPhone());
+        responseDto.setEmail(savedEmployee.getEmail());
+        responseDto.setAge(savedEmployee.getAge());
+        responseDto.setDepartmentId(savedEmployee.getDepartment().getId());
+        return responseDto;
     }
 }
