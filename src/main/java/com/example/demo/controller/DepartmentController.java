@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.DepartmentUpdateDTO;
+import com.example.demo.dto.EmployeeResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.dto.DepartmentCreateDTO;
-import com.example.demo.dto.DepartmentDTO;
+import com.example.demo.dto.DepartmentResponseDTO;
 import com.example.demo.service.DepartmentService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/department")
@@ -26,56 +30,33 @@ public class DepartmentController {
     }
 
     @PostMapping
-    public ResponseEntity<?> addDepartment(@RequestBody DepartmentCreateDTO department) {
-        try {
-            DepartmentDTO saved = departmentService.addDepartment(department);
-            return ResponseEntity.status(HttpStatus.CREATED).body(saved);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<DepartmentResponseDTO> addDepartment(@RequestBody DepartmentCreateDTO dto) {
+        DepartmentResponseDTO response = departmentService.addDepartment(dto);
+        return ResponseEntity.status(201).body(response);
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllDepartments() {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(departmentService.getAllDepartments());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    public ResponseEntity<List<DepartmentResponseDTO>> getAllDepartments() {
+        List<DepartmentResponseDTO> departments = departmentService.getAllDepartments();
+        return ResponseEntity.ok(departments);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDepartmentById(@PathVariable String id) {
-        try {
-            var result = departmentService.getDepartmentById(id);
-            if (result.isPresent()) {
-                return ResponseEntity.ok(result.get());
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Department not found");
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<DepartmentResponseDTO> getDepartmentById(@PathVariable String id) {
+        DepartmentResponseDTO department = departmentService.getDepartmentById(id);
+        return ResponseEntity.ok(department);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteDepartment(@PathVariable String id) {
-        try {
-            departmentService.deleteDepartment(id);
-            return ResponseEntity.ok("Department deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    public ResponseEntity<DepartmentResponseDTO> deleteDepartment(@PathVariable String id) {
+        departmentService.deleteDepartment(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateDepartment(@PathVariable String id, @RequestBody DepartmentCreateDTO department) {
-        try {
-            DepartmentDTO updated = departmentService.updateDepartment(id, department);
-            return ResponseEntity.ok(updated);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<DepartmentResponseDTO> updateDepartment(@PathVariable String id, @RequestBody DepartmentUpdateDTO dto) {
+        DepartmentResponseDTO updatedDepartment = departmentService.updateDepartment(id, dto);
+        return ResponseEntity.ok(updatedDepartment);
     }
 
 }
