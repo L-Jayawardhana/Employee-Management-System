@@ -1,14 +1,12 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.Attendance;
-
 import java.time.LocalDate;
 
 public class AttendanceResponseDTO {
     private Long id;
-    private String employeeId;
+    private String employee_Id;
     private LocalDate date;
-    private Attendance.AttendanceStatus status;
+    private String status;
 
     public Long getId() {
         return id;
@@ -18,12 +16,12 @@ public class AttendanceResponseDTO {
         this.id = id;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
+    public String getemployee_Id() {
+        return employee_Id;
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
+    public void setemployee_Id(String employee_Id) {
+        this.employee_Id = employee_Id;
     }
 
     public LocalDate getDate() {
@@ -34,11 +32,11 @@ public class AttendanceResponseDTO {
         this.date = date;
     }
 
-    public Attendance.AttendanceStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(Attendance.AttendanceStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 }
