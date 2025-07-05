@@ -1,21 +1,17 @@
 package com.example.demo.controller;
 
-import java.util.stream.Collectors;
-
+import com.example.demo.dto.AttendanceCreateDTO;
+import com.example.demo.dto.AttendanceResponseDTO;
+import com.example.demo.dto.AttendanceUpdateDTO;
+import com.example.demo.model.Attendance;
+import com.example.demo.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.dto.AttendanceCreateDTO;
-import com.example.demo.dto.AttendanceDTO;
-import com.example.demo.model.Attendance;
-import com.example.demo.service.AttendanceService;
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "api/v1/attendance")
@@ -29,50 +25,41 @@ public class AttendanceController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createAttendance(@RequestBody AttendanceCreateDTO attendanceCreateDTO) {
-        try {
-            Attendance saved = attendanceService.createAttendance(attendanceCreateDTO);
-            AttendanceDTO dto = new AttendanceDTO(
-                saved.getId(),
-                saved.getEmployee().getId(),
-                saved.getDate(),
-                saved.getStatus().name()
-            );
-            return ResponseEntity.status(HttpStatus.CREATED).body(dto);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<AttendanceResponseDTO> createAttendance(@RequestBody AttendanceCreateDTO dto) {
+        AttendanceResponseDTO response = attendanceService.createAttendance(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllAttendances() {
-        try {
-            var attendances = attendanceService.getAllAttendances();
-            var dtos = attendances.stream().map(a -> new AttendanceDTO(
-                a.getId(),
-                a.getEmployee().getId(),
-                a.getDate(),
-                a.getStatus().name()
-            )).collect(Collectors.toList());
-            return ResponseEntity.ok(dtos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+    @GetMapping("/employee/{id}/date/{date}")
+    public ResponseEntity<AttendanceResponseDTO> getAttendanceByEmployeeIdAndDate(@PathVariable String id, @PathVariable LocalDate date) {
+        AttendanceResponseDTO attendances = attendanceService.getAttendanceByEmployeeIdAndDate(id, date);
+        return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
-    @GetMapping("/employee_Id/{id}")
-    public ResponseEntity<?> getAttendanceByEmployeeId(@PathVariable String id) {
-        try {
-            var attendances = attendanceService.getAttendanceByEmployeeId(id);
-            var dtos = attendances.stream().map(a -> new AttendanceDTO(
-                a.getId(),
-                a.getEmployee().getId(),
-                a.getDate(),
-                a.getStatus().name()
-            )).collect(Collectors.toList());
-            return ResponseEntity.ok(dtos);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+    @GetMapping("/date/{date}")
+    public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByDate(@PathVariable LocalDate date) {
+        List<AttendanceResponseDTO> attendances = attendanceService.getAttendanceByDate(date);
+        return ResponseEntity.status(HttpStatus.OK).body(attendances);
+    }
+
+    @GetMapping("/date/{date}/status/{status}")
+    public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByDateAndStatus(@PathVariable LocalDate date, @PathVariable Attendance.AttendanceStatus status) {
+        List<AttendanceResponseDTO> attendances = attendanceService.getAttendanceByDateAndStatus(date, status);
+        return ResponseEntity.status(HttpStatus.OK).body(attendances);
+    }
+
+    @GetMapping("/employee/{id}/dateRange/startDate/{startDate}/endDate/{endDate}")
+    public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByEmployeeIdAndDateRange(
+            @PathVariable String id,
+            @PathVariable LocalDate startDate,
+            @PathVariable LocalDate endDate) {
+        List<AttendanceResponseDTO> attendances = attendanceService.getAttendanceByEmployeeIdAndDateRange(id, startDate, endDate);
+        return ResponseEntity.status(HttpStatus.OK).body(attendances);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AttendanceResponseDTO> updateAttendance(@PathVariable Long id, @RequestBody AttendanceUpdateDTO dto) {
+        AttendanceResponseDTO updatedAttendance = attendanceService.updateAttendance(id, dto);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedAttendance);
     }
 }
