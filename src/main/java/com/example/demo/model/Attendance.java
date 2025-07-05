@@ -1,17 +1,8 @@
 package com.example.demo.model;
 
-import java.time.LocalDate;
+import jakarta.persistence.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "attendance")
@@ -23,7 +14,7 @@ public class Attendance {
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
-    private Employee empId;
+    private Employee employee;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
@@ -48,11 +39,11 @@ public class Attendance {
     }
 
     public Employee getEmployee() {
-        return empId;
+        return employee;
     }
 
     public void setEmployee(Employee employee) {
-        this.empId = employee;
+        this.employee = employee;
     }
 
     public LocalDate getDate() {
