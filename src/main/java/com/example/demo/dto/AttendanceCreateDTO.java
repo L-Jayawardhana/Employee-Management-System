@@ -1,19 +1,13 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.Attendance;
+
 import java.time.LocalDate;
 
 public class AttendanceCreateDTO {
     private String employeeId;
     private LocalDate date;
-    private String status;
-
-    public AttendanceCreateDTO() {}
-
-    public AttendanceCreateDTO(String employeeId, LocalDate date, String status) {
-        this.employeeId = employeeId;
-        this.date = date;
-        this.status = status;
-    }
+    private Attendance.AttendanceStatus status;
 
     public String getEmployeeId() {
         return employeeId;
@@ -31,11 +25,11 @@ public class AttendanceCreateDTO {
         this.date = date;
     }
 
-    public String getStatus() {
+    public Attendance.AttendanceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Attendance.AttendanceStatus status) {
         this.status = status;
     }
 }
