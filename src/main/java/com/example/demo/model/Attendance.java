@@ -23,7 +23,7 @@ public class Attendance {
 
     @ManyToOne
     @JoinColumn(name = "employee_id", nullable = false)
-    private Employee employee;
+    private Employee empId;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
@@ -48,11 +48,11 @@ public class Attendance {
     }
 
     public Employee getEmployee() {
-        return employee;
+        return empId;
     }
 
     public void setEmployee(Employee employee) {
-        this.employee = employee;
+        this.empId = employee;
     }
 
     public LocalDate getDate() {
