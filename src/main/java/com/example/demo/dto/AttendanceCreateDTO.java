@@ -5,16 +5,16 @@ import com.example.demo.model.Attendance;
 import java.time.LocalDate;
 
 public class AttendanceCreateDTO {
-    private String employeeId;
+    private String employee_Id; // or Long employee_Id;
     private LocalDate date;
     private Attendance.AttendanceStatus status;
 
-    public String getEmployeeId() {
-        return employeeId;
+    public String getemployee_Id() {
+        return employee_Id;
     }
 
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
+    public void setemployee_Id(String employee_Id) {
+        this.employee_Id = employee_Id;
     }
 
     public LocalDate getDate() {
