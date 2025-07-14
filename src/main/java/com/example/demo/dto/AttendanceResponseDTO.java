@@ -7,6 +7,7 @@ public class AttendanceResponseDTO {
     private String employee_Id;
     private LocalDate date;
     private String status;
+    private Double overTimeHours;
 
     public Long getId() {
         return id;
@@ -16,12 +17,20 @@ public class AttendanceResponseDTO {
         this.id = id;
     }
 
-    public String getemployee_Id() {
+    public String getEmployee_Id() {
         return employee_Id;
     }
 
-    public void setemployee_Id(String employee_Id) {
+    public void setEmployee_Id(String employee_Id) {
         this.employee_Id = employee_Id;
+    }
+
+    public Double getOverTimeHours() {
+        return overTimeHours;
+    }
+
+    public void setOverTimeHours(Double overTimeHours) {
+        this.overTimeHours = overTimeHours;
     }
 
     public LocalDate getDate() {
