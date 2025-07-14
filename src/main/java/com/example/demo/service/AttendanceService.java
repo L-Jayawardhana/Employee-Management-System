@@ -34,13 +34,18 @@ public class AttendanceService {
     }
 
     public AttendanceResponseDTO createAttendance(AttendanceCreateDTO dto) {
-        Employee employee = employeeRepository.findById(dto.getemployee_Id())
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + dto.getemployee_Id()));
+        Employee employee = employeeRepository.findById(dto.getEmployee_Id())
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with id: " + dto.getEmployee_Id()));
 
-        if (attendanceRepository.existsByEmployee_Id(dto.getemployee_Id()) && attendanceRepository.existsByDate(dto.getDate())) {
-            throw new AttendanceAlreadyExistsException("Attendance already exists for employee id: " + dto.getemployee_Id() + " on date: " + dto.getDate());
+        if (attendanceRepository.existsByEmployee_Id(dto.getEmployee_Id()) && attendanceRepository.existsByDate(dto.getDate())) {
+            throw new AttendanceAlreadyExistsException("Attendance already exists for employee id: " + dto.getEmployee_Id() + " on date: " + dto.getDate());
         }
+        if (dto.getStatus() != null && (dto.getStatus().equals("LEAVE") || dto.getStatus().equals("NO_PAY") || dto.getStatus().equals("HALF_DAY"))) {
+            dto.setOverTimeHours(0.0); // Set overtime hours to 0 for these statuses
+        } else if (dto.getOverTimeHours() == null) {
+            dto.setOverTimeHours(0.0); // Default to 0 if not provided
 
+        }
         Attendance attendance = attendanceMapper.toEntity(dto, employee);
         Attendance savedAttendance = attendanceRepository.save(attendance);
         return attendanceMapper.toResponseDTO(savedAttendance);
@@ -104,6 +109,12 @@ public class AttendanceService {
                 .orElseThrow(() -> new AttendanceNotFoundException("Attendance not found with id: " + id));
         if (dto.getStatus() != null){
             attendance.setStatus(dto.getStatus());
+        }
+        if (dto.getOverTimeHours() == null || "LEAVE".equals(dto.getStatus().toString()) || "NO_PAY".equals(dto.getStatus().toString()) || "HALF_DAY".equals(dto.getStatus().toString())) {
+            attendance.setOverTimeHours(0);
+        }
+        if (dto.getOverTimeHours() != null) {
+            attendance.setOverTimeHours(dto.getOverTimeHours());
         }
         Attendance savedAttendance = attendanceRepository.save(attendance);
         return attendanceMapper.toResponseDTO(savedAttendance);
