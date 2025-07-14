@@ -30,6 +30,9 @@ public class Attendance {
         NO_PAY;
     }
 
+    @Column(name = "OverTimeHours", nullable = false)
+    private double OverTimeHours;
+
     public Long getId() {
         return id;
     }
@@ -40,6 +43,14 @@ public class Attendance {
 
     public Employee getEmployee() {
         return employee;
+    }
+
+    public double getOverTimeHours() {
+        return OverTimeHours;
+    }
+
+    public void setOverTimeHours(double overTimeHours) {
+        OverTimeHours = overTimeHours;
     }
 
     public void setEmployee(Employee employee) {
