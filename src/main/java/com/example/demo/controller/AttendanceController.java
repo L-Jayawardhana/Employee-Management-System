@@ -30,13 +30,13 @@ public class AttendanceController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/employee/{id}/date/{date}")
+    @GetMapping("/employee/{id}/date={date}")
     public ResponseEntity<AttendanceResponseDTO> getAttendanceByEmployeeIdAndDate(@PathVariable String id, @PathVariable LocalDate date) {
         AttendanceResponseDTO attendances = attendanceService.getAttendanceByEmployeeIdAndDate(id, date);
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
-    @GetMapping("/date/{date}")
+    @GetMapping("/date={date}")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByDate(@PathVariable LocalDate date) {
         List<AttendanceResponseDTO> attendances = attendanceService.getAttendanceByDate(date);
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
@@ -48,7 +48,7 @@ public class AttendanceController {
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
-    @GetMapping("/employee/{id}/dateRange/startDate/{startDate}/endDate/{endDate}")
+    @GetMapping("/employee/{id}/dateRange/startDate={startDate}/endDate={endDate}")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByEmployeeIdAndDateRange(
             @PathVariable String id,
             @PathVariable LocalDate startDate,
