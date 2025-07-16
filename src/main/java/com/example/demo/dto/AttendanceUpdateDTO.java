@@ -4,6 +4,16 @@ import com.example.demo.model.Attendance;
 
 public class AttendanceUpdateDTO {
     private Attendance.AttendanceStatus status;
+    private Double overTimeHours;
+
+
+    public Double getOverTimeHours() {
+        return overTimeHours;
+    }
+
+    public void setOverTimeHours(Double overTimeHours) {
+        this.overTimeHours = overTimeHours;
+    }
 
     public Attendance.AttendanceStatus getStatus() {
         return status;
