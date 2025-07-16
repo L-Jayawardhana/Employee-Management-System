@@ -4,6 +4,7 @@ public class DepartmentResponseDTO {
     private String id;
     private String name;
     private long salary;
+    private int OverTimeRate;
 
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
@@ -13,4 +14,12 @@ public class DepartmentResponseDTO {
     
     public long getSalary() { return salary; }
     public void setSalary(long salary) { this.salary = salary; }
+
+    public int getOverTimeRate() {
+        return OverTimeRate;
+    }
+
+    public void setOverTimeRate(int overTimeRate) {
+        OverTimeRate = overTimeRate;
+    }
 }
