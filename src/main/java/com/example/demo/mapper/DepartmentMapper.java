@@ -11,6 +11,7 @@ public class DepartmentMapper {
         Department department = new Department();
         department.setName(dto.getName());
         department.setSalary(dto.getSalary());
+        department.setOverTimeRate(dto.getOverTimeRate());
         return department;
     }
 
@@ -19,6 +20,7 @@ public class DepartmentMapper {
         responseDTO.setId(savedDepartment.getId());
         responseDTO.setName(savedDepartment.getName());
         responseDTO.setSalary(savedDepartment.getSalary());
+        responseDTO.setOverTimeRate(savedDepartment.getOverTimeRate());
         return responseDTO;
     }
 }
