@@ -71,6 +71,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
+    @ExceptionHandler(SalaryNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSalaryNotFound(SalaryNotFoundException e, HttpServletRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage(), 404, LocalDateTime.now(), request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex, HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse("Internal Server Error: " + ex.getMessage(), 500, LocalDateTime.now(), request.getRequestURI());
