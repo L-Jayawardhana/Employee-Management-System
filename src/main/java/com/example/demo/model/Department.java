@@ -1,6 +1,11 @@
 package com.example.demo.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(
@@ -20,6 +25,9 @@ public class Department {
     @Column(name = "salary", nullable = false)
     private long salary;
 
+    @Column(name = "OverTimeRate", nullable = false)
+    private int OverTimeRate;
+
     @PrePersist
     public void generateId() {
         if (this.name != null) {
@@ -29,10 +37,11 @@ public class Department {
 
     public Department() {}
 
-    public Department(String id, String name, long salary) {
+    public Department(String id, String name, long salary, int overTimeRate) {
         this.id = id;
         this.name = name;
         this.salary = salary;
+        this.OverTimeRate = overTimeRate;
     }
 
     public String getId() {
@@ -57,5 +66,13 @@ public class Department {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getOverTimeRate() {
+        return OverTimeRate;
+    }
+
+    public void setOverTimeRate(int overTimeRate) {
+        OverTimeRate = overTimeRate;
     }
 }
