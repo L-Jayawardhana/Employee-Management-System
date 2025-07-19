@@ -67,6 +67,9 @@ public class DepartmentService {
         if (dto.getSalary() > 0) {
             existingDepartment.setSalary(dto.getSalary());
         }
+        if (dto.getOverTimeRate() > 0) {
+            existingDepartment.setOverTimeRate(dto.getOverTimeRate());
+        }
         Department saved = departmentRepository.save(existingDepartment);
         return departmentMapper.toResponseDTO(saved);
     }
