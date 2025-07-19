@@ -17,10 +17,10 @@ public class DemoApplication {
 	@Bean
 	CommandLineRunner initDepartments(DepartmentRepository departmentRepository) {
 		return args -> {
-			departmentRepository.save(new Department("MAIN", "maintenance", 45000));
-			departmentRepository.save(new Department("MARK", "marketing", 40000));
-			departmentRepository.save(new Department("MANU", "manufacturing", 38000));
-			departmentRepository.save(new Department("DESI", "designing", 38000));
+			departmentRepository.save(new Department("MAIN", "maintenance", 45000, 150));
+			departmentRepository.save(new Department("MARK", "marketing", 40000, 170));
+			departmentRepository.save(new Department("MANU", "manufacturing", 38000, 175));
+			departmentRepository.save(new Department("DESI", "designing", 38000, 150));
 		};
 	}
 }
