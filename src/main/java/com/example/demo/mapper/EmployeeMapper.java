@@ -23,6 +23,7 @@ public class EmployeeMapper {
         employee.setAge(age);
         employee.setBirthday(dto.getBirthday());
         employee.setDepartment(department);
+        employee.setRole(dto.getRole());
 
         return employee;
     }
@@ -36,7 +37,8 @@ public class EmployeeMapper {
         responseDto.setPhone(savedEmployee.getPhone());
         responseDto.setEmail(savedEmployee.getEmail());
         responseDto.setAge(savedEmployee.getAge());
-        responseDto.setDepartmentId(savedEmployee.getDepartment().getId());
+        responseDto.setDepartment_id(savedEmployee.getDepartment().getId());
+        responseDto.setRole(savedEmployee.getRole());
         return responseDto;
     }
 }

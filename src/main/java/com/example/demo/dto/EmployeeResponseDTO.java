@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.Role;
+
 public class EmployeeResponseDTO {
     private String id;
     private String firstName;
@@ -8,7 +10,8 @@ public class EmployeeResponseDTO {
     private String phone;
     private String email;
     private int age;
-    private String departmentId;
+    private String department_id;
+    private Role role;
 
    // Getters and setters
     public String getId() {
@@ -59,19 +62,27 @@ public class EmployeeResponseDTO {
         this.age = age;
     }
 
-    public String getDepartmentId() {
-        return departmentId;
+    public String getDepartment_id() {
+        return department_id;
     }
 
-    public void setDepartmentId(String departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment_id(String department_id) {
+        this.department_id = department_id;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String adress) {
-        this.address = adress;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

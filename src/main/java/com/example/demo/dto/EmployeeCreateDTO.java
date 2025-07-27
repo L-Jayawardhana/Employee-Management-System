@@ -1,6 +1,7 @@
 package com.example.demo.dto;
 
 import java.time.LocalDate;
+import com.example.demo.model.Role;
 
 public class EmployeeCreateDTO {
     private String firstName;
@@ -12,7 +13,8 @@ public class EmployeeCreateDTO {
     private String email;
     private String password;
     private LocalDate birthday;
-    private String departmentId;
+    private String department_id;
+    private Role role;
 
 
     public String getFirstName() {
@@ -79,12 +81,12 @@ public class EmployeeCreateDTO {
         this.birthday = birthday;
     }
 
-    public String getDepartmentId() {
-        return departmentId;
+    public String getDepartment_id() {
+        return department_id;
     }
 
-    public void setDepartmentId(String departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartment_id(String department_id) {
+        this.department_id = department_id;
     }
 
     public String getAddress() {
@@ -93,5 +95,13 @@ public class EmployeeCreateDTO {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
