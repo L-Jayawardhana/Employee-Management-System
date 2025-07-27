@@ -4,7 +4,7 @@ import java.time.LocalDate;
 
 public class AttendanceResponseDTO {
     private Long id;
-    private String employee_Id;
+    private String employee_id;
     private LocalDate date;
     private String status;
     private Double overTimeHours;
@@ -17,12 +17,12 @@ public class AttendanceResponseDTO {
         this.id = id;
     }
 
-    public String getEmployee_Id() {
-        return employee_Id;
+    public String getEmployee_id() {
+        return employee_id;
     }
 
-    public void setEmployee_Id(String employee_Id) {
-        this.employee_Id = employee_Id;
+    public void setEmployee_id(String employee_id) {
+        this.employee_id = employee_id;
     }
 
     public Double getOverTimeHours() {

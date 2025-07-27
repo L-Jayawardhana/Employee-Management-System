@@ -1,19 +1,20 @@
 package com.example.demo.dto;
 
 import java.time.LocalDate;
+import com.example.demo.model.Attendance;
 
 public class AttendanceCreateDTO {
-    private String employee_Id;
+    private String employee_id;
     private LocalDate date;
-    private String status;
+    private Attendance.AttendanceStatus status;
     private Double overTimeHours;
 
-    public String getEmployee_Id() {
-        return employee_Id;
+    public String getEmployee_id() {
+        return employee_id;
     }
 
-    public void setEmployee_Id(String employee_Id) {
-        this.employee_Id = employee_Id;
+    public void setEmployee_id(String employee_id) {
+        this.employee_id = employee_id;
     }
 
     public Double getOverTimeHours() {
@@ -32,11 +33,11 @@ public class AttendanceCreateDTO {
         this.date = date;
     }
 
-    public String getStatus() {
+    public Attendance.AttendanceStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Attendance.AttendanceStatus status) {
         this.status = status;
     }
 }

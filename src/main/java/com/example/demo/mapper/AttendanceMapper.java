@@ -13,9 +13,9 @@ public class AttendanceMapper {
         Attendance attendance = new Attendance();
         attendance.setEmployee(employee);
         attendance.setDate(dto.getDate());
-        // Convert String status to Enum
-        attendance.setStatus(Attendance.AttendanceStatus.valueOf(dto.getStatus()));
-        attendance.setOverTimeHours(dto.getOverTimeHours() != null ? dto.getOverTimeHours() : 0.0);
+        // Set the enum status directly (no conversion needed since DTO now uses enum)
+        attendance.setStatus(dto.getStatus());
+        attendance.setOverTimeHours(dto.getOverTimeHours() != null ? dto.getOverTimeHours().doubleValue() : 0.0);
         return attendance;
     }
 
@@ -23,7 +23,7 @@ public class AttendanceMapper {
          AttendanceResponseDTO responseDTO = new AttendanceResponseDTO();
          responseDTO.setDate(savedattendance.getDate());
          responseDTO.setId(savedattendance.getId());
-         responseDTO.setEmployee_Id(savedattendance.getEmployee().getId());
+         responseDTO.setEmployee_id(savedattendance.getEmployee().getId());
          responseDTO.setStatus(savedattendance.getStatus().name());
          responseDTO.setOverTimeHours(savedattendance.getOverTimeHours());
          return responseDTO;

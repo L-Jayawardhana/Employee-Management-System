@@ -8,6 +8,7 @@ import com.example.demo.service.AttendanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,12 +25,15 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
-    @PostMapping
+
+    @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<AttendanceResponseDTO> createAttendance(@RequestBody AttendanceCreateDTO dto) {
         AttendanceResponseDTO response = attendanceService.createAttendance(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     @GetMapping("/employee/{id}/date={date}")
     public ResponseEntity<AttendanceResponseDTO> getAttendanceByEmployeeIdAndDate(@PathVariable String id, @PathVariable LocalDate date) {
         AttendanceResponseDTO attendances = attendanceService.getAttendanceByEmployeeIdAndDate(id, date);
@@ -37,17 +41,26 @@ public class AttendanceController {
     }
 
     @GetMapping("/date={date}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByDate(@PathVariable LocalDate date) {
         List<AttendanceResponseDTO> attendances = attendanceService.getAttendanceByDate(date);
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     @GetMapping("/date/{date}/status/{status}")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByDateAndStatus(@PathVariable LocalDate date, @PathVariable Attendance.AttendanceStatus status) {
         List<AttendanceResponseDTO> attendances = attendanceService.getAttendanceByDateAndStatus(date, status);
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
+    @GetMapping("/date/{date}/department/{department_id}")
+    public ResponseEntity<List<AttendanceResponseDTO>> getAttendancesByDateAndDepartmentId(@PathVariable LocalDate date, @PathVariable String department_id) {
+        List<AttendanceResponseDTO> attendances = attendanceService.getAttendancesByDateAndDepartmentId(date, department_id);
+        return ResponseEntity.status(HttpStatus.OK).body(attendances);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     @GetMapping("/employee/{id}/dateRange/startDate={startDate}/endDate={endDate}")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByEmployeeIdAndDateRange(
             @PathVariable String id,
@@ -57,7 +70,8 @@ public class AttendanceController {
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<AttendanceResponseDTO> updateAttendance(@PathVariable Long id, @RequestBody AttendanceUpdateDTO dto) {
         AttendanceResponseDTO updatedAttendance = attendanceService.updateAttendance(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(updatedAttendance);
