@@ -3,14 +3,14 @@ package com.example.demo.dto;
 public class DepartmentCreateDTO {
     private String name;
     private long salary;
-    private int OverTimeRate;
+    private int overTimeRate;
 
     public int getOverTimeRate() {
-        return OverTimeRate;
+        return overTimeRate;
     }
 
     public void setOverTimeRate(int overTimeRate) {
-        OverTimeRate = overTimeRate;
+        this.overTimeRate = overTimeRate;
     }
 
 
