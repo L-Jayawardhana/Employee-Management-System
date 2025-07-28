@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,19 +27,22 @@ public class SalaryController {
         this.salaryService = salaryService;
     }
 
-    @PostMapping
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
+    @PostMapping("/create")
     public ResponseEntity<SalaryResponseDTO> createSalary(@RequestBody SalaryCreateDTO dto) {
         SalaryResponseDTO response = salaryService.createSalary(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @GetMapping("/employee/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR') or hasRole('USER')")
+    @GetMapping("/getByEmpId/{id}")
     public ResponseEntity<List<SalaryResponseDTO>> getSalaryByEmployeeId(@PathVariable String id) {
         List<SalaryResponseDTO> salaries = salaryService.getSalaryByEmployeeId(id);
         return ResponseEntity.status(HttpStatus.OK).body(salaries);
     }
 
-    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
+    @GetMapping("getById/{id}")
     public ResponseEntity<SalaryResponseDTO> getSalaryById(@PathVariable long id) {
         SalaryResponseDTO salary = salaryService.getSalaryById(id);
         return ResponseEntity.status(HttpStatus.OK).body(salary);

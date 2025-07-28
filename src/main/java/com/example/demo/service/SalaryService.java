@@ -1,11 +1,5 @@
 package com.example.demo.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.example.demo.dto.SalaryCreateDTO;
 import com.example.demo.dto.SalaryResponseDTO;
 import com.example.demo.exception.DepartmentNotFoundException;
@@ -20,6 +14,11 @@ import com.example.demo.repository.AttendanceRepository;
 import com.example.demo.repository.DepartmentRepository;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.repository.SalaryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SalaryService {
@@ -44,13 +43,13 @@ public class SalaryService {
         Department department = departmentRepository.findById(dto.getDepartment_id())
                 .orElseThrow(() -> new DepartmentNotFoundException("Department not found with id: " + dto.getDepartment_id()));
         Salary salary = salaryMapper.toEntity(dto, employee, department);
-        String employeeId = dto.getEmployee_id(); // Use the actual ID
+        String employee_id = dto.getEmployee_id(); // Use the actual ID
 
-        int daysPRESENT = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employeeId, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("PRESENT")).size();
-        int daysLEAVE = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employeeId, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("LEAVE")).size();
-        int daysNO_PAY = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employeeId, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("NO_PAY")).size();
-        int daysHALF_DAY = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employeeId, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("HALF_DAY")).size();
-        double overTimeHours = attendanceRepository.findByEmployee_IdAndDateBetween(employeeId, dto.getStartDate(), dto.getEndDate())
+        int daysPRESENT = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employee_id, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("PRESENT")).size();
+        int daysLEAVE = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employee_id, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("LEAVE")).size();
+        int daysNO_PAY = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employee_id, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("NO_PAY")).size();
+        int daysHALF_DAY = attendanceRepository.findByEmployee_IdAndDateBetweenAndStatus(employee_id, dto.getStartDate(), dto.getEndDate(), Attendance.AttendanceStatus.valueOf("HALF_DAY")).size();
+        double overTimeHours = attendanceRepository.findByEmployee_IdAndDateBetween(employee_id, dto.getStartDate(), dto.getEndDate())
                 .stream()
                 .mapToDouble(Attendance::getOverTimeHours)
                 .sum();
