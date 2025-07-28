@@ -1,0 +1,12 @@
+create database employee;
+use employee;
+desc department;
+desc employee;
+desc attendance;
+select *from department;
+select *from employee;
+select *from attendance;
+select *from salary;
+
+
+DELETE FROM attendance where id = 2;
