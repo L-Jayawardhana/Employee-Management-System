@@ -46,12 +46,6 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/count")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
-    public int getAllEmployeesAsNo() {
-        return employeeService.getAllEmployeesAsNo();
-    }
-
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('HR') or hasRole('USER')")
     public ResponseEntity<EmployeeResponseDTO> getEmployeeById(@PathVariable String id) {

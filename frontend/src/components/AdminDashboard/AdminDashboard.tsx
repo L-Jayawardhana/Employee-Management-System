@@ -5,9 +5,11 @@ import './AdminDashboard.css';
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [totalEmployees, setTotalEmployees] = useState<number>(0);
+  const [totalDepartments, setTotalDepartments] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [departmentError, setDepartmentError] = useState<string | null>(null);
 
   useEffect(() => {
     // Try to get token from localStorage first, or simulate admin login
@@ -28,7 +30,10 @@ const AdminDashboard: React.FC = () => {
     
     if (token) {
       setAuthToken(token);
-      await fetchEmployeeCount(token);
+      await Promise.all([
+        fetchEmployeeCount(token),
+        fetchDepartmentCount(token)
+      ]);
     } else {
       console.error('No authentication token found');
       navigate('/login');
@@ -91,6 +96,60 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const fetchDepartmentCount = async (token: string) => {
+    try {
+      setDepartmentError(null);
+      console.log('Fetching department count with authentication...');
+      const response = await fetch('http://localhost:8080/api/v1/department/getAll', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+
+      console.log('Department response status:', response.status);
+      console.log('Department response ok:', response.ok);
+
+      const responseBody = await response.text();
+      let departments;
+      try {
+        departments = JSON.parse(responseBody);
+      } catch (e) {
+        setDepartmentError('Invalid JSON response from server.');
+        setTotalDepartments(0);
+        console.error('Invalid JSON:', responseBody);
+        return;
+      }
+
+      if (response.ok) {
+        // If the response is an array, use its length. If it's an object, try to find the array.
+        let count = 0;
+        if (Array.isArray(departments)) {
+          count = departments.length;
+        } else if (departments && Array.isArray(departments.data)) {
+          count = departments.data.length;
+        } else {
+          setDepartmentError('Unexpected response format.');
+          console.error('Unexpected department response format:', departments);
+        }
+        setTotalDepartments(count);
+      } else {
+        setDepartmentError(`Failed to fetch departments. Status: ${response.status}`);
+        console.error('Failed to fetch departments. Status:', response.status, responseBody);
+        if (response.status === 401 || response.status === 403) {
+          console.error('Authentication failed, clearing token and redirecting to login');
+          localStorage.removeItem('authToken');
+        }
+        setTotalDepartments(0);
+      }
+    } catch (error) {
+      setDepartmentError('Error fetching departments. See console for details.');
+      console.error('Error fetching departments:', error);
+      setTotalDepartments(0);
+    }
+  };
+
   const handleLogout = () => {
     // Clear authentication tokens
     localStorage.removeItem('authToken');
@@ -132,7 +191,9 @@ const AdminDashboard: React.FC = () => {
               <div className="stat-icon">🏢</div>
               <div className="stat-info">
                 <h3>Departments</h3>
-                <p className="stat-number">12</p>
+                <p className="stat-number">
+                  {loading ? 'Loading...' : departmentError ? <span style={{color: 'red'}}>{departmentError}</span> : totalDepartments}
+                </p>
               </div>
             </div>
             <div className="stat-card">
@@ -152,7 +213,7 @@ const AdminDashboard: React.FC = () => {
           </div>
 
           <div className="dashboard-grid">
-            <div className="dashboard-section">
+            <div className="dashboard-section employee-management-section">
               <h2>Employee Management</h2>
               <div className="action-grid">
                 <button className="action-card" onClick={() => navigate('/addEmployee')}>
@@ -160,20 +221,10 @@ const AdminDashboard: React.FC = () => {
                   <h4>Add Employee</h4>
                   <p>Register new employees</p>
                 </button>
-                <button className="action-card">
+                <button className="action-card" onClick={() => navigate('/view-employees')}>
                   <div className="action-icon">👤</div>
                   <h4>View Employees</h4>
                   <p>Manage employee profiles</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">✏️</div>
-                  <h4>Edit Employee</h4>
-                  <p>Update employee information</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">🗑️</div>
-                  <h4>Remove Employee</h4>
-                  <p>Deactivate employee accounts</p>
                 </button>
               </div>
             </div>

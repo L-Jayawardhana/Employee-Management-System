@@ -5,11 +5,9 @@ import './AddEmployee.css';
 interface Department {
   id: string;
   name: string;
-  salary: number;
-  overTimeRate: number;
 }
 
-interface EmployeeFormData {
+interface FormData {
   firstName: string;
   lastName: string;
   nic: string;
@@ -18,6 +16,7 @@ interface EmployeeFormData {
   phone: string;
   email: string;
   password: string;
+  confirmPassword: string;
   birthday: string;
   department_id: string;
   role: string;
@@ -25,9 +24,7 @@ interface EmployeeFormData {
 
 const AddEmployee: React.FC = () => {
   const navigate = useNavigate();
-  const [departments, setDepartments] = useState<Department[]>([]);
-  const [departmentsLoading, setDepartmentsLoading] = useState<boolean>(true);
-  const [formData, setFormData] = useState<EmployeeFormData>({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     nic: '',
@@ -36,78 +33,158 @@ const AddEmployee: React.FC = () => {
     phone: '',
     email: '',
     password: '',
+    confirmPassword: '',
     birthday: '',
     department_id: '',
     role: 'USER'
   });
-  const [confirmPassword, setConfirmPassword] = useState('');
+  
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
-  const [success, setSuccess] = useState<string>('');
+  const [departmentsLoading, setDepartmentsLoading] = useState<boolean>(true);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [success, setSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    const userRole = localStorage.getItem('userRole');
-    const authToken = localStorage.getItem('authToken');
-    if (!authToken || userRole !== 'ADMIN') {
-      navigate('/');
-      return;
-    }
-    fetchDepartments(authToken);
-  }, [navigate]);
+    fetchDepartments();
+  }, []);
 
-  const fetchDepartments = async (token: string) => {
+  const fetchDepartments = async () => {
     try {
-      setDepartmentsLoading(true);
-      const response = await fetch('http://localhost:8080/api/v1/department', {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setErrors(['Authentication required. Please login again.']);
+        navigate('/login');
+        return;
+      }
+
+      const response = await fetch('http://localhost:8080/api/v1/department/getAll', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
       });
+
       if (response.ok) {
-        const departmentsData = await response.json();
-        setDepartments(departmentsData);
+        const departmentData = await response.json();
+        const deptList = Array.isArray(departmentData) ? departmentData : departmentData.data || [];
+        setDepartments(deptList);
       } else {
-        setDepartments([]);
+        setErrors(['Failed to load departments. Please try again.']);
       }
     } catch (error) {
-      setDepartments([]);
+      console.error('Error fetching departments:', error);
+      setErrors(['Failed to load departments. Please check your connection.']);
     } finally {
       setDepartmentsLoading(false);
     }
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear errors when user starts typing
+    if (errors.length > 0) {
+      setErrors([]);
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: string[] = [];
+
+    // Required field validation
+    if (!formData.firstName.trim()) newErrors.push('First name is required');
+    if (!formData.lastName.trim()) newErrors.push('Last name is required');
+    if (!formData.nic.trim()) newErrors.push('NIC is required');
+    if (!formData.address.trim()) newErrors.push('Address is required');
+    if (!formData.gender) newErrors.push('Gender is required');
+    if (!formData.phone.trim()) newErrors.push('Phone number is required');
+    if (!formData.email.trim()) newErrors.push('Email is required');
+    if (!formData.password) newErrors.push('Password is required');
+    if (!formData.birthday) newErrors.push('Birthday is required');
+    if (!formData.department_id) newErrors.push('Department is required');
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (formData.email && !emailRegex.test(formData.email)) {
+      newErrors.push('Please enter a valid email address');
+    }
+
+    // Phone validation
+    const phoneRegex = /^[0-9+\-\s()]+$/;
+    if (formData.phone && !phoneRegex.test(formData.phone)) {
+      newErrors.push('Please enter a valid phone number');
+    }
+
+    // Password validation
+    if (formData.password && formData.password.length < 6) {
+      newErrors.push('Password must be at least 6 characters long');
+    }
+
+    // Confirm password validation
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.push('Passwords do not match');
+    }
+
+    // NIC validation (Sri Lankan format)
+    const nicRegex = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+    if (formData.nic && !nicRegex.test(formData.nic)) {
+      newErrors.push('Please enter a valid NIC number');
+    }
+
+    setErrors(newErrors);
+    return newErrors.length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-    if (formData.password !== confirmPassword) {
-      setError('Passwords do not match.');
+    
+    if (!validateForm()) {
       return;
     }
+
     setLoading(true);
+    setErrors([]);
+
     try {
-      const authToken = localStorage.getItem('authToken');
-      if (!authToken) {
-        navigate('/');
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        setErrors(['Authentication required. Please login again.']);
+        navigate('/login');
         return;
       }
+
+      // Prepare the data according to EmployeeCreateDTO
+      const employeeData = {
+        firstName: formData.firstName.trim(),
+        lastName: formData.lastName.trim(),
+        nic: formData.nic.trim(),
+        address: formData.address.trim(),
+        gender: formData.gender,
+        phone: formData.phone.trim(),
+        email: formData.email.trim(),
+        password: formData.password,
+        birthday: formData.birthday,
+        department_id: formData.department_id,
+        role: formData.role
+      };
+
       const response = await fetch('http://localhost:8080/api/v1/employee', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(employeeData),
       });
+
       if (response.ok) {
-        setSuccess('Employee added successfully!');
+        setSuccess(true);
         setFormData({
           firstName: '',
           lastName: '',
@@ -117,20 +194,24 @@ const AddEmployee: React.FC = () => {
           phone: '',
           email: '',
           password: '',
+          confirmPassword: '',
           birthday: '',
           department_id: '',
           role: 'USER'
         });
-        setConfirmPassword('');
+        
+        // Redirect after a short delay
         setTimeout(() => {
           navigate('/admin-dashboard');
         }, 2000);
       } else {
         const errorData = await response.text();
-        setError(`Failed to add employee: ${errorData}`);
+        console.error('Server response:', errorData);
+        setErrors([`Failed to create employee: ${response.status} ${response.statusText}`]);
       }
     } catch (error) {
-      setError('Error adding employee. Please try again.');
+      console.error('Error creating employee:', error);
+      setErrors(['Failed to create employee. Please check your connection and try again.']);
     } finally {
       setLoading(false);
     }
@@ -141,91 +222,82 @@ const AddEmployee: React.FC = () => {
   };
 
   return (
-    <div className="add-employee-hero-bg">
-      <div className="add-employee-card">
-        <div className="add-employee-header colorful-gradient">
-          <h1>Register New Employee</h1>
-          <button onClick={handleCancel} className="cancel-btn">
-            Back to Dashboard
-          </button>
+    <div className="add-employee-container">
+      <div className="add-employee-wrapper">
+        <div className="add-employee-header">
+          <h1>Add New Employee</h1>
+          <p>Fill in the details below to register a new employee</p>
         </div>
-        <div className="add-employee-steps">
-          <span className="step active">1</span>
-          <span className="step">2</span>
-          <span className="step">3</span>
-        </div>
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
-        <form onSubmit={handleSubmit} className="add-employee-form modern-form">
-          <div className="form-grid">
-            <div className="form-group">
-              <label htmlFor="firstName">First Name *</label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter first name"
-                autoComplete="off"
-              />
+
+        <form onSubmit={handleSubmit} className="add-employee-form">
+          {/* Success Message */}
+          {success && (
+            <div className="success-message">
+              <div className="success-icon">✅</div>
+              <div>
+                <h3>Employee Created Successfully!</h3>
+                <p>Redirecting to dashboard...</p>
+              </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="lastName">Last Name *</label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter last name"
-                autoComplete="off"
-              />
+          )}
+
+          {/* Error Messages */}
+          {errors.length > 0 && (
+            <div className="error-messages">
+              <h4>Please fix the following errors:</h4>
+              <ul>
+                {errors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
             </div>
-            <div className="form-group">
-              <label htmlFor="nic">NIC *</label>
-              <input
-                type="text"
-                id="nic"
-                name="nic"
-                value={formData.nic}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter NIC number"
-                autoComplete="off"
-              />
+          )}
+
+          {/* Personal Information Section */}
+          <div className="form-section">
+            <h3 className="section-title">Personal Information</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="firstName">First Name *</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  placeholder="Enter first name"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="lastName">Last Name *</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  placeholder="Enter last name"
+                  required
+                />
+              </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="email">Email *</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter email address"
-                autoComplete="off"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="phone">Phone *</label>
-              <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter phone number"
-                autoComplete="off"
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="gender">Gender *</label>
-              <div className="select-wrapper">
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="nic">NIC Number *</label>
+                <input
+                  type="text"
+                  id="nic"
+                  name="nic"
+                  value={formData.nic}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 123456789V or 123456789012"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="gender">Gender *</label>
                 <select
                   id="gender"
                   name="gender"
@@ -240,20 +312,53 @@ const AddEmployee: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="birthday">Birthday *</label>
-              <input
-                type="date"
-                id="birthday"
-                name="birthday"
-                value={formData.birthday}
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="birthday">Date of Birth *</label>
+                <input
+                  type="date"
+                  id="birthday"
+                  name="birthday"
+                  value={formData.birthday}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="phone">Phone Number *</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  placeholder="e.g., +94712345678"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-group full-width">
+              <label htmlFor="address">Address *</label>
+              <textarea
+                id="address"
+                name="address"
+                value={formData.address}
                 onChange={handleInputChange}
+                placeholder="Enter full address"
+                rows={3}
                 required
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="department_id">Department *</label>
-              <div className="select-wrapper">
+          </div>
+
+          {/* Employment Details Section */}
+          <div className="form-section">
+            <h3 className="section-title">Employment Details</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="department_id">Department *</label>
                 <select
                   id="department_id"
                   name="department_id"
@@ -272,15 +377,8 @@ const AddEmployee: React.FC = () => {
                   ))}
                 </select>
               </div>
-              {departments.length === 0 && !departmentsLoading && (
-                <small style={{ color: 'red', marginTop: '5px' }}>
-                  No departments found. Please contact admin.
-                </small>
-              )}
-            </div>
-            <div className="form-group">
-              <label htmlFor="role">Role *</label>
-              <div className="select-wrapper">
+              <div className="form-group">
+                <label htmlFor="role">Role *</label>
                 <select
                   id="role"
                   name="role"
@@ -294,61 +392,76 @@ const AddEmployee: React.FC = () => {
                 </select>
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="password">Password *</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter password"
-                minLength={6}
-                autoComplete="new-password"
-              />
+          </div>
+
+          {/* Account Information Section */}
+          <div className="form-section">
+            <h3 className="section-title">Account Information</h3>
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="email">Email Address *</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter email address"
+                  required
+                />
+              </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="confirmPassword">Confirm Password *</label>
-              <input
-                type="password"
-                id="confirmPassword"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={e => setConfirmPassword(e.target.value)}
-                required
-                placeholder="Re-enter password"
-                minLength={6}
-                autoComplete="new-password"
-              />
-            </div>
-            <div className="form-group full-width">
-              <label htmlFor="address">Address *</label>
-              <input
-                type="text"
-                id="address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                required
-                placeholder="Enter full address"
-                autoComplete="off"
-              />
+
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="password">Password *</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password (min 6 characters)"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="confirmPassword">Confirm Password *</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Re-enter password"
+                  required
+                />
+              </div>
             </div>
           </div>
-          <div className="form-actions modern-actions">
+
+          {/* Form Actions */}
+          <div className="form-actions">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="btn btn-secondary"
+              disabled={loading}
+            >
+              Cancel
+            </button>
             <button
               type="submit"
+              className="btn btn-primary"
               disabled={loading || departmentsLoading}
-              className="modern-submit-btn"
-              title="Register new employee to database"
             >
               {loading ? (
-                <span className="spinner"></span>
-              ) : (
                 <>
-                  <span className="btn-icon">🚀</span> Register Employee
+                  <span className="spinner"></span>
+                  Creating Employee...
                 </>
+              ) : (
+                'Create Employee'
               )}
             </button>
           </div>
