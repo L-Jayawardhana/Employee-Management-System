@@ -1,5 +1,11 @@
 package com.example.demo.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.demo.dto.DepartmentCreateDTO;
 import com.example.demo.dto.DepartmentResponseDTO;
 import com.example.demo.dto.DepartmentUpdateDTO;
@@ -9,11 +15,6 @@ import com.example.demo.exception.NoDepartmentsFoundException;
 import com.example.demo.mapper.DepartmentMapper;
 import com.example.demo.model.Department;
 import com.example.demo.repository.DepartmentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class DepartmentService {

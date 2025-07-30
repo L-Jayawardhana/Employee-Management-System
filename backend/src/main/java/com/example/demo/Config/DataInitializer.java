@@ -1,14 +1,15 @@
 package com.example.demo.Config;
 
-import com.example.demo.model.Employee;
-import com.example.demo.model.Role;
-import com.example.demo.repository.EmployeeRepository;
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
+import com.example.demo.model.Employee;
+import com.example.demo.model.Role;
+import com.example.demo.repository.EmployeeRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
