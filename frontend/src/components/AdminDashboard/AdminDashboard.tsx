@@ -232,7 +232,7 @@ const AdminDashboard: React.FC = () => {
           <div className="header-content">
             <h1>Admin Dashboard</h1>
             <div className="header-actions">
-              <span className="welcome-text">Welcome, Administrator</span>
+              <span className="welcome-text">Welcome, Admin</span>
               <button onClick={handleLogout} className="btn btn-secondary logout-btn">
                 Logout
               </button>

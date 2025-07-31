@@ -314,16 +314,6 @@ const HRDashboard: React.FC = () => {
                   <h4>View Employees</h4>
                   <p>Browse employee profiles</p>
                 </button>
-                <button className="action-card">
-                  <div className="action-icon">✏️</div>
-                  <h4>Update Profiles</h4>
-                  <p>Edit employee information</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">�</div>
-                  <h4>Employee Reports</h4>
-                  <p>Generate employee reports</p>
-                </button>
               </div>
             </div>
 
@@ -339,16 +329,6 @@ const HRDashboard: React.FC = () => {
                   <div className="action-icon">📅</div>
                   <h4>Monthly Reports</h4>
                   <p>Generate monthly reports</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">⏰</div>
-                  <h4>Time Tracking</h4>
-                  <p>Monitor working hours</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">🚫</div>
-                  <h4>Absence Management</h4>
-                  <p>Handle leave requests</p>
                 </button>
               </div>
             </div>

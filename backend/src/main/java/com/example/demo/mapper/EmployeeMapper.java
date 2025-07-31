@@ -37,6 +37,7 @@ public class EmployeeMapper {
         responseDto.setPhone(savedEmployee.getPhone());
         responseDto.setEmail(savedEmployee.getEmail());
         responseDto.setAge(savedEmployee.getAge());
+        responseDto.setNic(savedEmployee.getNic());
         responseDto.setDepartment_id(savedEmployee.getDepartment().getId());
         responseDto.setRole(savedEmployee.getRole());
         return responseDto;

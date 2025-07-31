@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.dto.EmployeeCreateDTO;
 import com.example.demo.dto.EmployeeResponseDTO;
 import com.example.demo.dto.EmployeeUpdateDTO;
+import com.example.demo.dto.PasswordUpdateDTO;
 import com.example.demo.service.EmployeeService;
 
 @RestController
@@ -72,5 +73,12 @@ public class EmployeeController {
     public ResponseEntity<EmployeeResponseDTO> updateEmployeeById(@PathVariable String id, @RequestBody EmployeeUpdateDTO dto) {
         EmployeeResponseDTO updatedEmployee = employeeService.updateEmployeeById(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(updatedEmployee);
+    }
+
+    @PutMapping("/change-password/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR') or (hasRole('USER') and #id == authentication.name)")
+    public ResponseEntity<String> changeEmployeePassword(@PathVariable String id, @RequestBody PasswordUpdateDTO dto) {
+        employeeService.changeEmployeePassword(id, dto);
+        return ResponseEntity.ok("Password updated successfully");
     }
 }
