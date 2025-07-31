@@ -159,11 +159,6 @@ const EmployeeDetails: React.FC = () => {
           {/* Profile Section */}
           <div className="profile-section">
             <div className="profile-card">
-              <div className="profile-avatar">
-                <div className="avatar-placeholder">
-                  {employee.firstName.charAt(0)}{employee.lastName.charAt(0)}
-                </div>
-              </div>
               <div className="profile-info">
                 <h2>{employee.firstName} {employee.lastName}</h2>
                 <div className="role-badge">{employee.role}</div>
