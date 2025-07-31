@@ -1,18 +1,10 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.EmployeeCreateDTO;
-import com.example.demo.dto.EmployeeResponseDTO;
-import com.example.demo.dto.EmployeeUpdateDTO;
-import com.example.demo.exception.DepartmentNotFoundException;
-import com.example.demo.exception.EmployeeAlreadyExistsException;
-import com.example.demo.exception.EmployeeNotFoundException;
-import com.example.demo.exception.NoEmployeesFoundException;
-import com.example.demo.mapper.EmployeeMapper;
-import com.example.demo.model.*;
-import com.example.demo.repository.AttendanceRepository;
-import com.example.demo.repository.DepartmentRepository;
-import com.example.demo.repository.EmployeeRepository;
-import com.example.demo.repository.SalaryRepository;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -24,10 +16,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.example.demo.dto.EmployeeCreateDTO;
+import com.example.demo.dto.EmployeeResponseDTO;
+import com.example.demo.dto.EmployeeUpdateDTO;
+import com.example.demo.dto.PasswordUpdateDTO;
+import com.example.demo.exception.DepartmentNotFoundException;
+import com.example.demo.exception.EmployeeAlreadyExistsException;
+import com.example.demo.exception.EmployeeNotFoundException;
+import com.example.demo.exception.InvalidPasswordException;
+import com.example.demo.exception.NoEmployeesFoundException;
+import com.example.demo.mapper.EmployeeMapper;
+import com.example.demo.model.Attendance;
+import com.example.demo.model.Department;
+import com.example.demo.model.Employee;
+import com.example.demo.model.Role;
+import com.example.demo.model.Salary;
+import com.example.demo.repository.AttendanceRepository;
+import com.example.demo.repository.DepartmentRepository;
+import com.example.demo.repository.EmployeeRepository;
+import com.example.demo.repository.SalaryRepository;
 
 @Service
 public class EmployeeService implements UserDetailsService {
@@ -190,4 +197,46 @@ public class EmployeeService implements UserDetailsService {
             throw new AccessDeniedException("Only ADMIN and HR users can create employees");
         }
     }
+
+    /**
+     * Changes the password for an employee after validating the current password.
+     * @param employeeId The ID of the employee whose password is to be changed
+     * @param passwordUpdateDTO DTO containing current and new passwords
+     * @throws EmployeeNotFoundException if employee is not found
+     * @throws InvalidPasswordException if current password is incorrect or new password is invalid
+     */
+    @Transactional
+    public void changeEmployeePassword(String employeeId, PasswordUpdateDTO passwordUpdateDTO) {
+        // Find the employee
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found with ID: " + employeeId));
+
+        // Verify current password
+        if (!passwordEncoder.matches(passwordUpdateDTO.getCurrentPassword(), employee.getPassword())) {
+            throw new InvalidPasswordException("Current password is incorrect");
+        }
+
+        // Validate new password (basic validation)
+        if (passwordUpdateDTO.getNewPassword() == null || passwordUpdateDTO.getNewPassword().trim().isEmpty()) {
+            throw new InvalidPasswordException("New password cannot be empty");
+        }
+
+        if (passwordUpdateDTO.getNewPassword().length() < 8) {
+            throw new InvalidPasswordException("New password must be at least 8 characters long");
+        }
+
+        // Ensure new password is different from current password
+        if (passwordEncoder.matches(passwordUpdateDTO.getNewPassword(), employee.getPassword())) {
+            throw new InvalidPasswordException("New password must be different from current password");
+        }
+
+        // Hash the new password and update
+        String hashedNewPassword = passwordEncoder.encode(passwordUpdateDTO.getNewPassword());
+        employee.setPassword(hashedNewPassword);
+        
+        // Save the updated employee
+        employeeRepository.save(employee);
+    }
+
+
 }

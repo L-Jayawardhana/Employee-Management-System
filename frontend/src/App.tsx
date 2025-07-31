@@ -1,0 +1,40 @@
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import HomePage from './components/HomePage/HomePage';
+import LoginPage from './components/LoginPage/LoginPage';
+import AdminDashboard from './components/AdminDashboard/AdminDashboard';
+import HRDashboard from './components/HRDashboard/HRDashboard';
+import UserDashboard from './components/UserDashboard/UserDashboard';
+import AddEmployee from './components/AddEmployee/AddEmployee';
+import EmployeeDetails from './components/EmployeeDetails/EmployeeDetails';
+import EmployeeList from './components/EmployeeList/EmployeeList';
+import AttendanceDetails from './components/AttendanceDetails/AttendanceDetails';
+import CreateDepartment from './components/CreateDepartment/CreateDepartment';
+import DepartmentDetails from './components/DepartmentDetails/DepartmentDetails';
+import './styles/colors.css';
+import './App.css';
+
+function App() {
+  return (
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route path="/hr-dashboard" element={<HRDashboard />} />
+          <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/addEmployee" element={<AddEmployee />} />
+          <Route path="/edit-employee/:id" element={<AddEmployee />} />
+          <Route path="/view-employees" element={<EmployeeList />} />
+          <Route path="/employee/:id" element={<EmployeeDetails />} />
+          <Route path="/attendance-details" element={<AttendanceDetails />} />
+          <Route path="/create-department" element={<CreateDepartment />} />
+          <Route path="/department-details" element={<DepartmentDetails />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+export default App;

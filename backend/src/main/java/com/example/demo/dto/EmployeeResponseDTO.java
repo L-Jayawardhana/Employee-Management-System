@@ -10,6 +10,7 @@ public class EmployeeResponseDTO {
     private String phone;
     private String email;
     private int age;
+    private String nic;
     private String department_id;
     private Role role;
 
@@ -60,6 +61,14 @@ public class EmployeeResponseDTO {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getNic() {
+        return nic;
+    }
+
+    public void setNic(String nic) {
+        this.nic = nic;
     }
 
     public String getDepartment_id() {

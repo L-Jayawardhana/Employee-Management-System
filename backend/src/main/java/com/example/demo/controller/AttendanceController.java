@@ -54,13 +54,14 @@ public class AttendanceController {
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     @GetMapping("/date/{date}/department/{department_id}")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendancesByDateAndDepartmentId(@PathVariable LocalDate date, @PathVariable String department_id) {
         List<AttendanceResponseDTO> attendances = attendanceService.getAttendancesByDateAndDepartmentId(date, department_id);
         return ResponseEntity.status(HttpStatus.OK).body(attendances);
     }
 
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('HR') or hasRole('USER')")
     @GetMapping("/employee/{id}/dateRange/startDate={startDate}/endDate={endDate}")
     public ResponseEntity<List<AttendanceResponseDTO>> getAttendanceByEmployeeIdAndDateRange(
             @PathVariable String id,
