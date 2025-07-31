@@ -20,12 +20,13 @@ interface AttendanceRecord {
 const AttendanceDetails: React.FC = () => {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [attendanceByDept, setAttendanceByDept] = useState<Record<string, AttendanceRecord[]>>({});
-  const [statuses, setStatuses] = useState<string[]>(['PRESENT', 'NO_PAY', 'HALF_DAY', 'ABSENT']);
+  const [statuses, setStatuses] = useState<string[]>(['PRESENT', 'NO_PAY', 'HALF_DAY', 'LEAVE']);
   const [selectedDate, setSelectedDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
   const [searchId, setSearchId] = useState('');
   const [searchDate, setSearchDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [employeeAttendance, setEmployeeAttendance] = useState<AttendanceRecord | null>(null);
   const [loading, setLoading] = useState(false);
+  const [searchLoading, setSearchLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
@@ -125,8 +126,25 @@ const AttendanceDetails: React.FC = () => {
     e.preventDefault();
     setEmployeeAttendance(null);
     setError(null);
+    
+    // Validate inputs
+    if (!searchId.trim()) {
+      setError('Please enter a valid Employee ID');
+      return;
+    }
+    
+    if (!searchDate) {
+      setError('Please select a date');
+      return;
+    }
+    
     const token = localStorage.getItem('authToken');
-    if (!token) return;
+    if (!token) {
+      setError('Authentication required. Please login again.');
+      return;
+    }
+    
+    setSearchLoading(true);
     
     try {
       const res = await fetch(`http://localhost:8080/api/v1/attendance/employee/${searchId}/date=${searchDate}`, {
@@ -169,11 +187,15 @@ const AttendanceDetails: React.FC = () => {
             setEmployeeAttendance(attendanceRecord);
           }
         }
+      } else if (res.status === 404) {
+        setError(`No attendance record found for Employee ID: ${searchId} on ${searchDate}`);
       } else {
-        setError('No attendance found for this employee and date.');
+        setError(`Failed to fetch attendance. Server responded with status: ${res.status}`);
       }
     } catch (e) {
-      setError('Failed to fetch employee attendance.');
+      setError('Network error: Unable to connect to the server. Please check your connection and try again.');
+    } finally {
+      setSearchLoading(false);
     }
   };
 
@@ -193,7 +215,7 @@ const AttendanceDetails: React.FC = () => {
         </div>
 
         {loading && <p className="loading-message">Loading attendance...</p>}
-        {error && <div className="error-message">{error}</div>}
+        {error && !searchId && <div className="error-message">{error}</div>}
 
         <div className="search-section">
           <h3>Find Employee Attendance by ID and Date</h3>
@@ -213,7 +235,9 @@ const AttendanceDetails: React.FC = () => {
               required 
               className="search-input"
             />
-            <button type="submit" className="search-button">Search</button>
+            <button type="submit" className="search-button" disabled={searchLoading}>
+              {searchLoading ? 'Searching...' : 'Search'}
+            </button>
           </form>
           
           {employeeAttendance && (
@@ -230,10 +254,14 @@ const AttendanceDetails: React.FC = () => {
                 <span className="employee-result-label">Status:</span>
                 <span className="employee-result-value">{employeeAttendance.status}</span>
               </div>
-              <div className="employee-result-item">
-                <span className="employee-result-label">Department:</span>
-                <span className="employee-result-value">{employeeAttendance.departmentName || employeeAttendance.departmentId}</span>
-              </div>
+            </div>
+          )}
+          
+          {error && (
+            <div className="no-record-found">
+              <div className="no-record-icon">📋</div>
+              <h4>No Record Found</h4>
+              <p>{error}</p>
             </div>
           )}
         </div>
@@ -247,7 +275,9 @@ const AttendanceDetails: React.FC = () => {
                 return (
                   <div key={status} className={`status-section status-${status}`}>
                     <div className="status-header">
-                      <span className="status-label">{status.replace('_', ' ')}:</span>
+                      <span className="status-label">
+                        {status === 'LEAVE' ? 'LEAVES' : status.replace('_', ' ')}:
+                      </span>
                       <span className="status-count">{statusRecords.length}</span>
                     </div>
                   </div>

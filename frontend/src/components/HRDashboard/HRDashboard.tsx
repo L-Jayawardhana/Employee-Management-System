@@ -6,10 +6,12 @@ const HRDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [totalEmployees, setTotalEmployees] = useState<number>(0);
   const [totalDepartments, setTotalDepartments] = useState<number>(0);
+  const [todaysAttendance, setTodaysAttendance] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [departmentError, setDepartmentError] = useState<string | null>(null);
+  const [attendanceError, setAttendanceError] = useState<string | null>(null);
 
   useEffect(() => {
     // Try to get token from localStorage first, or simulate HR login
@@ -32,7 +34,8 @@ const HRDashboard: React.FC = () => {
       setAuthToken(token);
       await Promise.all([
         fetchEmployeeCount(token),
-        fetchDepartmentCount(token)
+        fetchDepartmentCount(token),
+        fetchTodaysAttendance(token)
       ]);
     } else {
       console.error('No authentication token found');
@@ -150,6 +153,69 @@ const HRDashboard: React.FC = () => {
     }
   };
 
+  const fetchTodaysAttendance = async (token: string) => {
+    try {
+      setAttendanceError(null);
+      console.log("Fetching today's attendance with HR authentication...");
+      // Get today's date in YYYY-MM-DD format
+      const today = new Date().toISOString().split('T')[0];
+      const response = await fetch(`http://localhost:8080/api/v1/attendance/date/${today}/status/PRESENT`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      console.log("Today's attendance response status:", response.status);
+      console.log("Today's attendance response ok:", response.ok);
+      if (response.status === 204) {
+        // No Content: no present employees
+        setTodaysAttendance(0);
+        return;
+      }
+      const responseBody = await response.text();
+      if (!responseBody) {
+        setTodaysAttendance(0);
+        return;
+      }
+      let attendanceRecords;
+      try {
+        attendanceRecords = JSON.parse(responseBody);
+      } catch (e) {
+        setAttendanceError('Invalid JSON response from server.');
+        setTodaysAttendance(0);
+        console.error('Invalid JSON:', responseBody);
+        return;
+      }
+      if (response.ok) {
+        // If the response is an array, use its length
+        let count = 0;
+        if (Array.isArray(attendanceRecords)) {
+          count = attendanceRecords.length;
+        } else if (attendanceRecords && Array.isArray(attendanceRecords.data)) {
+          count = attendanceRecords.data.length;
+        } else {
+          setAttendanceError('Unexpected response format.');
+          console.error('Unexpected attendance response format:', attendanceRecords);
+        }
+        setTodaysAttendance(count);
+        console.log(`Found ${count} employees present today (${today})`);
+      } else {
+        setAttendanceError(`Failed to fetch today's attendance. Status: ${response.status}`);
+        console.error('Failed to fetch attendance. Status:', response.status, responseBody);
+        if (response.status === 401 || response.status === 403) {
+          console.error('Authentication failed, clearing token and redirecting to login');
+          localStorage.removeItem('authToken');
+        }
+        setTodaysAttendance(0);
+      }
+    } catch (error) {
+      setAttendanceError("Error fetching today's attendance. See console for details.");
+      console.error("Error fetching today's attendance:", error);
+      setTodaysAttendance(0);
+    }
+  };
+
   const handleLogout = () => {
     // Clear authentication tokens
     localStorage.removeItem('authToken');
@@ -199,15 +265,37 @@ const HRDashboard: React.FC = () => {
             <div className="stat-card">
               <div className="stat-icon">📅</div>
               <div className="stat-info">
-                <h3>Leave Requests</h3>
-                <p className="stat-number">12</p>
+                <h3>Today's Attendance</h3>
+                <p className="stat-number">
+                  {loading ? 'Loading...' : attendanceError ? <span style={{color: 'red'}}>{attendanceError}</span> : todaysAttendance}
+                </p>
+                {!loading && !attendanceError && (
+                  <a
+                    href="#"
+                    style={{
+                      fontSize: '0.95rem',
+                      opacity: 0.85,
+                      color: '#059669',
+                      textDecoration: 'underline',
+                      cursor: 'pointer',
+                      marginTop: '2px',
+                      display: 'inline-block'
+                    }}
+                    onClick={e => {
+                      e.preventDefault();
+                      navigate('/attendance-details');
+                    }}
+                  >
+                    More details
+                  </a>
+                )}
               </div>
             </div>
             <div className="stat-card">
               <div className="stat-icon">⏰</div>
               <div className="stat-info">
-                <h3>Present Today</h3>
-                <p className="stat-number">142</p>
+                <h3>Leave Requests</h3>
+                <p className="stat-number">12</p>
               </div>
             </div>
           </div>

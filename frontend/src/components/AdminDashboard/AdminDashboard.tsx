@@ -320,25 +320,15 @@ const AdminDashboard: React.FC = () => {
             <div className="dashboard-section">
               <h2>Department Management</h2>
               <div className="action-grid">
-                <button className="action-card">
+                <button className="action-card" onClick={() => navigate('/create-department')}>
                   <div className="action-icon">🏗️</div>
                   <h4>Create Department</h4>
                   <p>Add new departments</p>
                 </button>
-                <button className="action-card">
+                <button className="action-card" onClick={() => navigate('/department-details')}>
                   <div className="action-icon">🏢</div>
                   <h4>View Departments</h4>
                   <p>Manage all departments</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">📊</div>
-                  <h4>Department Reports</h4>
-                  <p>View department analytics</p>
-                </button>
-                <button className="action-card">
-                  <div className="action-icon">⚙️</div>
-                  <h4>Department Settings</h4>
-                  <p>Configure department details</p>
                 </button>
               </div>
             </div>

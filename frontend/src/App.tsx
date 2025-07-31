@@ -9,6 +9,8 @@ import AddEmployee from './components/AddEmployee/AddEmployee';
 import EmployeeDetails from './components/EmployeeDetails/EmployeeDetails';
 import EmployeeList from './components/EmployeeList/EmployeeList';
 import AttendanceDetails from './components/AttendanceDetails/AttendanceDetails';
+import CreateDepartment from './components/CreateDepartment/CreateDepartment';
+import DepartmentDetails from './components/DepartmentDetails/DepartmentDetails';
 import './styles/colors.css';
 import './App.css';
 
@@ -27,6 +29,8 @@ function App() {
           <Route path="/view-employees" element={<EmployeeList />} />
           <Route path="/employee/:id" element={<EmployeeDetails />} />
           <Route path="/attendance-details" element={<AttendanceDetails />} />
+          <Route path="/create-department" element={<CreateDepartment />} />
+          <Route path="/department-details" element={<DepartmentDetails />} />
         </Routes>
       </div>
     </Router>

@@ -111,27 +111,18 @@ const CreateDepartment: React.FC = () => {
 
   return (
     <div className="create-department">
-      <header className="page-header">
-        <div className="container">
-          <div className="header-content">
-            <div className="header-title">
-              <div className="header-icon">🏗️</div>
-              <div className="title-text">
-                <h1>Create New Department</h1>
-                <p className="header-subtitle">Add a new department to your organization</p>
-              </div>
-            </div>
-            <button onClick={handleCancel} className="btn btn-secondary back-btn">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Back to Dashboard
-            </button>
-          </div>
+      <div className="create-department-wrapper">
+        <div className="department-header">
+          <h2>Create New Department</h2>
+          <button onClick={handleCancel} className="action-btn back-btn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            Back to Dashboard
+          </button>
         </div>
-      </header>
 
-      <main className="page-main">
+      <main className="department-main">
         <div className="container">
           <div className="form-container">
             <div className="form-card">
@@ -175,6 +166,7 @@ const CreateDepartment: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder="Enter base salary"
                     min="0"
+                    step="0.01"
                     required
                     disabled={loading}
                   />
@@ -191,10 +183,10 @@ const CreateDepartment: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder="Enter overtime rate percentage"
                     min="0"
-                    max="100"
+                    step="0.01"
                     disabled={loading}
                   />
-                  <small>Overtime rate percentage (0-100)</small>
+                  <small>Overtime rate percentage</small>
                 </div>
 
                 <div className="form-actions">
@@ -219,6 +211,7 @@ const CreateDepartment: React.FC = () => {
           </div>
         </div>
       </main>
+      </div>
     </div>
   );
 };
