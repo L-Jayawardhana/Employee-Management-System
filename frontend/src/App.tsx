@@ -8,6 +8,7 @@ import UserDashboard from './components/UserDashboard/UserDashboard';
 import AddEmployee from './components/AddEmployee/AddEmployee';
 import EmployeeDetails from './components/EmployeeDetails/EmployeeDetails';
 import EmployeeList from './components/EmployeeList/EmployeeList';
+import AttendanceDetails from './components/AttendanceDetails/AttendanceDetails';
 import './styles/colors.css';
 import './App.css';
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/edit-employee/:id" element={<AddEmployee />} />
           <Route path="/view-employees" element={<EmployeeList />} />
           <Route path="/employee/:id" element={<EmployeeDetails />} />
+          <Route path="/attendance-details" element={<AttendanceDetails />} />
         </Routes>
       </div>
     </Router>
